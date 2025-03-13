@@ -1,0 +1,94 @@
+<!-- Modal Editar Comentario -->
+<div class="modal fade" id="editComment" tabindex="-1" aria-labelledby="editCommentLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCommentLabel">Editar Comentario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editCommentForm">
+                    {% csrf_token %}
+                    <!-- Formulario para editar comentario -->
+                    <div class="mb-3">
+                        <label for="editCommentText" class="form-label">Comentario</label>
+                        <textarea id="editCommentText" name="text" class="form-control" rows="6"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCommentUpdatedBy" class="form-label">Actualizado por</label>
+                        <input type="text" id="editCommentUpdatedBy" name="updatedby" class="form-control" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editCommentUpdatedAt" class="form-label">Última Actualización</label>
+                        <input type="text" id="editCommentUpdatedAt" name="updated_at" class="form-control" disabled>
+                    </div>
+                    <input type="hidden" id="editCommentId" name="comment_id" />
+                    <input type="hidden" id="editTaskId" name="task_id" />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="saveEditCommentBtn">Guardar cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    // Al hacer clic en un botón "Editar"
+const editButtons = document.querySelectorAll('.viewtask-btn');
+
+editButtons.forEach(button => {
+    button.addEventListener('click', function () {
+        const commentId = button.getAttribute('data-comment-id');
+        const taskId = button.getAttribute('data-task-id');
+        const commentText = button.getAttribute('data-text');
+        const commentUpdatedBy = button.getAttribute('data-updated-by');
+        const commentUpdatedAt = button.getAttribute('data-updated-at');
+
+        // Llenar los campos del modal con los datos
+        document.getElementById('editCommentText').value = commentText;
+        document.getElementById('editCommentUpdatedBy').value = commentUpdatedBy || '';
+        document.getElementById('editCommentUpdatedAt').value = commentUpdatedAt || '-';
+        document.getElementById('editCommentId').value = commentId;
+        document.getElementById('editTaskId').value = taskId;
+    });
+});
+
+// Al hacer clic en "Guardar cambios" en el modal
+document.getElementById('saveEditCommentBtn').addEventListener('click', function () {
+    const form = document.getElementById('editCommentForm');
+    const formData = new FormData(form);
+
+    const commentId = document.getElementById('editCommentId').value;
+    const url = "{% url 'projects:edit_comment' 0 %}".replace('0', commentId);
+
+
+
+    // Enviar el formulario al servidor
+    fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Cerrar el modal
+            $('#editComment').modal('hide');
+            // Recargar la página o actualizar la tabla
+            location.reload();  // Recargar la página o actualizar la tabla
+        } else {
+            alert('Hubo un error al guardar los cambios.');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+</script>
+

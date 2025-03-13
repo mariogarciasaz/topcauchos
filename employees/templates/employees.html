@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{%block title %} Empleados {%endblock%}
+
+{% block content %}
+
+<div class="row mb-3 mx-3">
+    <div class="col-md-12 d-flex justify-content-between align-items-center">
+        <!-- Formulario de búsqueda alineado a la izquierda -->
+        <form method="GET" action="{% url 'employees:employees' %}" class="form-inline d-flex">
+            <input name="search" class="form-control mr-2" type="search" placeholder="Buscar">
+            <button type="submit" class="btn btn-outline-success mx-2">Buscar</button>
+        </form>
+
+        <!-- Botón "Agregar Cliente" alineado a la derecha -->
+        <a href="{% url 'admin:employees_employee_add' %}" class="btn btn-primary button-41" style="min-width: 150px;" target="_blank">
+            Agregar Empleado
+        </a>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <table class="table align-middle mb-0 bg-white">
+        <thead class="bg-light">
+            <tr>
+                <th>Username</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Posicion</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in employees %}
+            {% if employee.is_superuser %}
+            {% else %}
+                <tr>
+                    <td>{{employee.username}}</td>
+                    <td>{{employee.first_name}}</td>
+                    <td>{{employee.last_name}}</td>
+                    <td>{{employee.email}}</td>
+                    <td>{{employee.position}}</td>
+                    <td>
+                        <a href="{% url 'admin:employees_employee_change' employee.id %}" class="btn btn-primary btn-sm" target="_blank">
+                            Editar
+                        </a>
+                        <a href="{% url 'admin:auth_user_password_change' employee.id %}" class="btn btn-warning btn-sm" target="_blank">
+                            Cambiar Password
+                        </a>
+                        <a href="{% url 'admin:employees_employee_delete' employee.id %}" class="btn btn-danger btn-sm" target="_blank">
+                            Eliminar
+                        </a>
+                    </td>
+                </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{%endblock%}

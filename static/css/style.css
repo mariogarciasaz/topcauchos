@@ -1,0 +1,211 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+::after,
+::before {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+li {
+    list-style: none;
+}
+
+h1 {
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.wrapper {
+    display: flex;
+    transition: margin-left 0.5s ease-in-out; /* Suaviza la transición del contenido */
+}
+
+#sidebar {
+    position: fixed;
+    width: 70px;
+    min-width: 70px;
+    min-height: 100%;
+    height: auto;
+    z-index: 1000;
+    transition: all 0.5s ease-in-out; /* Transición suave en el sidebar */
+    background-color: #0e2238;
+    display: flex;
+    flex-direction: column;
+    margin-right: 1%;
+}
+
+#sidebar.expand {
+    width: 260px; /* Ancho del sidebar expandido */
+    min-width: 260px;
+}
+
+.toggle-btn {
+    background-color: transparent;
+    cursor: pointer;
+    border: 0;
+    padding: 1rem 1.5rem;
+}
+
+.toggle-btn i {
+    font-size: 1.5rem;
+    color: #FFF;
+}
+
+.sidebar-logo {
+    margin: auto 0;
+}
+
+.sidebar-logo a {
+    color: #FFF;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+#sidebar:not(.expand) .sidebar-logo,
+#sidebar:not(.expand) a.sidebar-link span {
+    display: none;
+}
+
+.sidebar-nav {
+    padding: 2rem 0;
+    flex: 1 1 auto;
+}
+
+a.sidebar-link {
+    padding: .625rem 1.625rem;
+    color: #FFFFFF;
+    display: block;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    border-left: 3px solid transparent;
+}
+
+
+.sidebar-link i {
+    font-size: 1.1rem;
+    margin-right: .75rem;
+}
+
+a.sidebar-link:hover {
+    background-color: rgba(255, 255, 255, .075);
+    border-left: 3px solid #3b7ddd;
+}
+
+.sidebar-item {
+    position: relative;
+}
+
+#sidebar:not(.expand) .sidebar-item .sidebar-dropdown {
+    position: absolute;
+    top: 0;
+    left: 70px;
+    background-color: #0e2238;
+    padding: 0;
+    min-width: 15rem;
+    display: none;
+}
+
+#sidebar:not(.expand) .sidebar-item:hover .has-dropdown+.sidebar-dropdown {
+    display: block;
+    max-height: 15em;
+    width: 100%;
+    opacity: 1;
+}
+
+#sidebar.expand .sidebar-link[data-bs-toggle="collapse"]::after {
+    border: solid;
+    border-width: 0 .075rem .075rem 0;
+    content: "";
+    display: inline-block;
+    padding: 2px;
+    position: absolute;
+    right: 1.5rem;
+    top: 1.4rem;
+    transform: rotate(-135deg);
+    transition: all .2s ease-out;
+}
+
+#sidebar.expand .sidebar-link[data-bs-toggle="collapse"].collapsed::after {
+    transform: rotate(45deg);
+    transition: all .2s ease-out;
+}
+
+
+.titlepage {
+    text-align: center;
+    margin-top: 2%;
+    margin-bottom: 2%;
+    color: #0e2238;
+    justify-content: center;
+}
+
+/* Crea espacio debajo de la barra de navegación para el contenido principal */
+.body-content {
+    width: 100%;
+    background-color: rgba(240, 240, 240, 0.267);
+    transition: margin-left 0.5s ease-in-out; /* Suaviza la transición del contenido */
+}
+
+/* Desplaza el contenido cuando el sidebar está expandido */
+#sidebar.expand + .body-content {
+    margin-left: 260px; /* Ajusta este valor al ancho del sidebar expandido */
+}
+
+/* Desplaza el contenido cuando el sidebar está contraído */
+#sidebar:not(.expand) + .body-content {
+    margin-left: 70px; /* Ancho del sidebar cuando está contraído */
+}
+
+.titlecontainer {
+    margin-top: 2%;
+    margin-bottom: 2%;
+    color: #0e2238;
+}
+
+.card-title {
+    color: #0e2238;
+}
+
+.formselect {
+    margin-top: 2%;
+    margin-bottom: 2%;
+    width: 20%;
+}
+
+.logout-button {
+    background: none;          /* Eliminar el fondo del botón */
+    border: none;              /* Eliminar el borde del botón */
+    color: inherit;            /* Heredar el color del texto del enlace */
+    font-size: 0.9rem;         /* Igualar el tamaño de la fuente con los enlaces */
+    padding: .625rem 1.625rem; /* Igualar el padding de los enlaces */
+    display: block;            /* Hacer que el botón ocupe todo el espacio como el enlace */
+    text-align: left;          /* Alinear el texto a la izquierda */
+    width: 100%;               /* Hacer que el botón ocupe todo el ancho disponible */
+}
+
+/* Estilo del icono dentro del botón */
+.logout-button i {
+    font-size: 1.1rem;         /* Asegurarse de que el icono tenga el mismo tamaño que los enlaces */
+    margin-right: .75rem;      /* Separación entre el icono y el texto */
+}
+
+/* Estilo cuando el cursor está sobre el botón (efecto hover) */
+.logout-button:hover {
+    background-color: rgba(255, 255, 255, .075); /* Mismo color de fondo que en los enlaces */
+    border-left: 3px solid #3b7ddd;  /* Añadir el mismo borde izquierdo al pasar el cursor */
+}
+
+/* Aseguramos que el botón no tenga el borde inferior que aparece en los botones de formularios por defecto */
+.logout-button:focus {
+    outline: none;  /* Eliminar el borde de enfoque que aparece en los botones por defecto */
+}

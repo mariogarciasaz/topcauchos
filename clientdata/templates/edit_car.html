@@ -1,0 +1,142 @@
+<div class="modal fade" id="editCarModal" tabindex="-1" aria-labelledby="editCarModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editCarModalLabel">Editar Carro</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="#" id="editCarForm">
+                    {% csrf_token %}
+                    {{ car_form.client.as_hidden }}
+                    <input type="hidden" name="car_id" id="edit_car_id">  <!-- Campo oculto para ID del carro -->
+                    <div class="mb-3">
+                        <label for="edit_brand" class="form-label">Marca</label>
+                        <input type="text" name="brand" id="edit_brand" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_model" class="form-label">Modelo</label>
+                        <input type="text" name="model" id="edit_model" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_year" class="form-label">Año</label>
+                        <input type="text" name="year" id="edit_year" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_color" class="form-label">Color</label>
+                        <input type="text" name="color" id="edit_color" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_licenseplate" class="form-label">Placa</label>
+                        <input type="text" name="license_plate" id="edit_licenseplate" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_lastservice" class="form-label">Último Servicio</label>
+                        <input type="date" name="last_service_date" id="edit_lastservice" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_kms" class="form-label">Kms</label>
+                        <input type="text" name="kms" id="edit_kms" class="form-control">
+                    </div>
+                    <button type="button" class="btn btn-primary" id="btnGuardarCarro">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Obtener CSRF token
+        function getCSRFToken() {
+            return document.querySelector('[name=csrfmiddlewaretoken]').value;
+        }
+    
+        // Mostrar modal con datos del cliente
+        $('.edit-client-btn').click(function() {
+            var client = $(this).data('client');
+            var carId = $(this).data('id');
+            var carBrand = $(this).data('brand');
+            var carModel = $(this).data('model');
+            var carYear = $(this).data('year');
+            var carColor = $(this).data('color');
+            var carLicensePlate = $(this).data('licenseplate');
+            var carLastService = $(this).data('lastservicedate');
+            var carKms = $(this).data('kms');
+            
+            
+            // Verificar que los datos se estén recibiendo correctamente
+            console.log(carId, carBrand, carModel, carYear, carColor, carLicensePlate, carLastService, carKms);
+            
+            // Rellenar los campos del formulario con los datos del carro
+            $('#edit_car_id').val(carId);
+            $('#edit_brand').val(carBrand);
+            $('#edit_model').val(carModel);
+            $('#edit_year').val(carYear);
+            $('#edit_color').val(carColor);
+            $('#edit_licenseplate').val(carLicensePlate);
+            if (carLastService) {
+                console.log("Fecha recibida antes de procesar:", carLastService);
+            
+                // Convertir la fecha recibida a un objeto Date
+                let dateObj = new Date(carLastService);
+            
+                // Verificar si la fecha es válida
+                if (!isNaN(dateObj.getTime())) {
+                    // Ajustar la zona horaria local al formato local
+                    let localDate = new Date(dateObj.getTime() - (dateObj.getTimezoneOffset() * 60000));  // Ajuste para la zona horaria local
+            
+                    // Formatear la fecha al formato YYYY-MM-DD
+                    let formattedDate = localDate.toISOString().split('T')[0];
+                    console.log("Fecha formateada para input:", formattedDate);
+            
+                    // Asignar la fecha formateada al input
+                    $('#edit_lastservice').val(formattedDate);
+                } else {
+                    console.error("Error: La fecha recibida no es válida.");
+                }
+            }
+            $('#edit_kms').val(carKms);
+            
+            
+            // Establecer la URL de la acción del formulario dinámicamente
+            $('#editCarForm').attr('action', `/clientdata/cars/edit_car/${carId}/`);
+            
+            // Mostrar el modal
+            $('#editCarModal').modal('show');
+        });
+        
+    
+        // Guardar los cambios en el cliente con AJAX
+        $('#btnGuardarCarro').click(function(event) {
+            event.preventDefault(); // Evita recargar la página
+
+            var form = $("#editCarForm");
+            var formData = form.serialize(); // Serializa los datos del formulario
+    
+            $.ajax({
+                type: "POST",
+                url: form.attr("action"),
+                data: formData,
+                beforeSend: function(xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#editCarModal').modal('hide'); // Cerrar modal
+                        location.reload(); // Recargar página para ver cambios
+                    } else {
+                        alert("Error: " + JSON.stringify(response.errors));
+                    }
+                },
+                error: function(xhr) {
+                    alert("Error al actualizar el vehículo. Inténtalo de nuevo.");
+                }
+            });
+        });
+    });
+</script>

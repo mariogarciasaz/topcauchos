@@ -1,0 +1,76 @@
+<!-- Modal de Confirmación para Eliminar Comentario -->
+<div class="modal fade" id="deleteComment" tabindex="-1" aria-labelledby="deleteCommentLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteCommentLabel">Confirmación de Eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar este comentario?</p>
+                <form id="delete-comment-form" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="task_pk" id="task-id">
+                    <input type="hidden" name="comment_pk" id="comment-id">
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Escucha el evento de clic en el botón Eliminar
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            // Obtén los datos del comentario
+            const commentId = this.getAttribute('data-comment-id');
+            const taskId = this.getAttribute('data-task-id');
+
+            // Asigna los valores a los campos del formulario en el modal
+            document.getElementById('task-id').value = taskId;
+            document.getElementById('comment-id').value = commentId;
+
+            // Cambia la URL del formulario para que apunte a la ruta correcta
+            const form = document.getElementById('delete-comment-form');
+            form.action = `/projects/task/task_details/delete_comment/${commentId}/`;
+        });
+    });
+
+    // Maneja el envío del formulario de eliminación
+    document.getElementById('delete-comment-form').addEventListener('submit', function(event) {
+        event.preventDefault();  // Evitar que el formulario se envíe de la forma tradicional
+        
+        const form = this;
+        const formData = new FormData(form);
+
+        // Realiza la petición fetch para eliminar el comentario
+        fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Cerrar el modal
+                $('#deleteComment').modal('hide');
+                
+                // Mostrar un mensaje o realizar otras acciones según la respuesta
+
+                // Recargar la página o actualizar el DOM (ejemplo de recargar la página)
+                location.reload();
+            } else {
+                // Mostrar el error
+                alert('Hubo un error al eliminar el comentario.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+</script>
+

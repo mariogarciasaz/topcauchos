@@ -1,0 +1,60 @@
+<!-- Modal Ver Comentario -->
+<div class="modal fade" id="viewComment" tabindex="-1" aria-labelledby="viewCommentLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewCommentLabel">Detalles del Comentario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Información del comentario -->
+                <div class="mb-3">
+                    <label for="commentText" class="form-label">Comentario</label>
+                    <textarea id="commentText" class="form-control" rows="6" readonly></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="commentCreatedBy" class="form-label">Empleado</label>
+                    <input type="text" id="commentCreatedBy" class="form-control" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="commentCreatedAt" class="form-label">Fecha de Creación</label>
+                    <input type="text" id="commentCreatedAt" class="form-control" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="commentUpdatedBy" class="form-label">Actualizado por</label>
+                    <input type="text" id="commentUpdatedBy" class="form-control" readonly>
+                </div>
+                <div class="mb-3">
+                    <label for="commentUpdatedAt" class="form-label">Última Actualización</label>
+                    <input type="text" id="commentUpdatedAt" class="form-control" readonly>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Al hacer clic en un botón "Ver"
+    const viewButtons = document.querySelectorAll('.viewtask-btn');
+
+    viewButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const commentId = button.getAttribute('data-comment-id');
+            const commentText = button.getAttribute('data-text');
+            const commentCreatedBy = button.getAttribute('data-created-by');
+            const commentCreatedAt = button.getAttribute('data-created-at');
+            const commentUpdatedBy = button.getAttribute('data-updated-by');
+            const commentUpdatedAt = button.getAttribute('data-updated-at');
+
+            // Llenar los campos del modal con los datos
+            document.getElementById('commentText').value = commentText;
+            document.getElementById('commentCreatedBy').value = commentCreatedBy;
+            document.getElementById('commentCreatedAt').value = commentCreatedAt;
+            document.getElementById('commentUpdatedBy').value = commentUpdatedBy || '-';
+            document.getElementById('commentUpdatedAt').value = commentUpdatedAt || '-';
+        });
+    });
+</script>

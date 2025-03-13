@@ -1,0 +1,103 @@
+<!-- Modal para Editar Cliente -->
+<div class="modal fade" id="editClientModal" tabindex="-1" aria-labelledby="editClientLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editClientLabel">Editar Cliente</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editClientForm" method="POST" action="{% url 'clientdata:edit_client' 0 %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="client_id" id="edit_client_id"> <!-- ID del cliente -->
+                    <div class="form-group">
+                        <label for="edit_name" class="col-form-label">Nombre:</label>
+                        <input type="text" class="form-control" name="name" id="edit_name">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_email" class="col-form-label">Email:</label>
+                        <input type="text" class="form-control" name="email" id="edit_email">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_phone" class="col-form-label">Teléfono:</label>
+                        <input type="text" class="form-control" name="phone" id="edit_phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_address" class="col-form-label">Dirección:</label>
+                        <input type="text" class="form-control" name="address" id="edit_address">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="saveEditClientBtn">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap y jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Script para Cargar Datos en el Modal y Guardar Cambios -->
+<script>
+$(document).ready(function() {
+    // Obtener CSRF token
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+
+    // Mostrar modal con datos del cliente
+    $('.edit-client-btn').click(function() {
+        var clientId = $(this).data('id');
+        var clientName = $(this).data('name');
+        var clientEmail = $(this).data('email');
+        var clientPhone = $(this).data('phone');
+        var clientAddress = $(this).data('address');
+
+        // Rellenar los campos del formulario con los datos del cliente
+        $('#edit_client_id').val(clientId);
+        $('#edit_name').val(clientName);
+        $('#edit_email').val(clientEmail);
+        $('#edit_phone').val(clientPhone);
+        $('#edit_address').val(clientAddress);
+
+        // Establecer la URL de la acción del formulario dinámicamente
+        $('#editClientForm').attr('action', `edit/${clientId}/`);
+
+        // Mostrar el modal
+        $('#editClientModal').modal('show');
+    });
+
+    // Guardar los cambios en el cliente con AJAX
+    $('#saveEditClientBtn').click(function(event) {
+        event.preventDefault(); // Evita recargar la página
+
+        var form = $("#editClientForm");
+        var formData = form.serialize(); // Serializa los datos del formulario
+
+        $.ajax({
+            type: "POST",
+            url: form.attr("action"),
+            data: formData,
+            headers: {
+                "X-CSRFToken": getCSRFToken()
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#editClientModal').modal('hide'); // Cerrar modal
+                    location.reload(); // Recargar página para ver cambios
+                } else {
+                    alert("Error: " + JSON.stringify(response.error));
+                }
+            },
+            error: function(xhr) {
+                alert("Error al actualizar el cliente. Inténtalo de nuevo.");
+            }
+        });
+    });
+});
+</script>

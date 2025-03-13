@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{%block title %} Tareas {%endblock%}
+
+{% block content %}
+
+<div class="row mb-3 mx-3">
+    <div class="col-md-12 d-flex justify-content-between align-items-center">
+        <!-- Formulario de búsqueda alineado a la izquierda -->
+        <form method="GET" action="{% url 'projects:projects' %}" class="form-inline d-flex">
+            <input name="search" class="form-control mr-2" type="search" placeholder="Buscar">
+            <button type="submit" class="btn btn-outline-success mx-2">Buscar</button>
+        </form>
+
+        <!-- Botón "Agregar Cliente" alineado a la derecha -->
+        
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <table class="table align-middle mb-0 bg-white">
+        <thead class="bg-light">
+            <tr>
+                <th>Titulo</th>
+                <th>Descripcion</th>
+                <th>Proyecto</th>
+                <th>Estado</th>
+                <th>Fecha de Inicio</th>
+                <th>Fecha de Finalizacion</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for task in tasks %}
+            <tr>
+                <td>{{task.title}}</td>
+                <td>{{task.description}}</td>
+                <td>{{task.project.title}}</td>
+                <td>{{task.status}}</td>
+                <td>{{task.start_date}}</td>
+                <td>{{task.end_date|default:"-" }}</td>
+                <td>
+                    <button type="button" class="btn btn-primary btn-sm">
+                        <a href="{% url 'projects:task_details' task.pk %}" style="color: white;">Ficha</a>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+{%endblock%}

@@ -1,0 +1,73 @@
+<!-- Modal para Eliminar Cliente -->
+<div class="modal fade" id="deleteEmployeeModal" tabindex="-1" aria-labelledby="deleteEmployeeLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteEmployeeLabel">Eliminar Empleado</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar este empleado?</p>
+                <input type="hidden" name="employee_id" id="delete_employee_id">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteEmployeeBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap y jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Script para Eliminar Cliente -->
+<script>
+    $(document).ready(function() {
+        // Mostrar el modal de eliminación con el ID del empleado
+        $('.delete-employee-btn').click(function() {
+            var employeeId = $(this).data('id'); // Obtener el ID del empleado
+            
+            $('#delete_employee_id').val(employeeId);
+            $('#deleteEmployeeModal').modal('show');
+        });
+        
+    
+        // Confirmar la eliminación del empleado
+        $('#confirmDeleteEmployeeBtn').click(function() {
+    var employeeId = $('#delete_employee_id').val(); // Obtener el ID del empleado
+    
+
+    if (!employeeId) {
+        alert("Error: No se encontró el ID del empleado.");
+        return;
+    }
+
+    $.ajax({
+        type: "POST",
+        url: `delete/${employeeId}/`,  // Asegúrate de que esta URL es correcta
+        data: {
+            "csrfmiddlewaretoken": $('[name="csrfmiddlewaretoken"]').val()
+        },
+        success: function(response) {
+            if (response.success) {
+                $('#deleteEmployeeModal').modal('hide');
+                location.reload();
+            } else {
+                location.reload();
+                response.success
+            }
+        },
+        error: function(xhr, status, error) {
+            var errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : "Error al eliminar el empleado.";
+            alert(errorMessage);
+        }
+    });
+});
+
+    });
+    
+    </script>

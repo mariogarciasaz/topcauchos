@@ -1,0 +1,123 @@
+<!-- Modal para Editar Cliente -->
+<div class="modal fade" id="editEmployeeModal" tabindex="-1" aria-labelledby="editEmployeeLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editEmployeeLabel">Editar Empleado</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editEmployeeForm" method="POST" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="employee_id" id="edit_employee_id"> <!-- ID del empleado -->
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Username:</label>
+                        <input type="text" class="form-control" name="username" id="id_username">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Password:</label>
+                        <input type="password" class="form-control" name="password" id="id_password">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Nombre:</label>
+                        <input type="text" class="form-control" name="firstname" id="id_firstname">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Apellidos:</label>
+                        <input type="text" class="form-control" name="lastname" id="id_lastname">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Email:</label>
+                        <input type="text" class="form-control" name="email" id="id_email">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Posicion:</label>
+                        <input type="text" class="form-control" name="position" id="id_position">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">Is Staff:</label>
+                        <input type="checkbox" name="is-staff" id="id_is-staff">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="saveEditEmployeeBtn">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap y jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Script para Cargar Datos en el Modal y Guardar Cambios -->
+<script>
+$(document).ready(function() {
+    // Obtener CSRF token
+    function getCSRFToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
+
+    // Mostrar modal con datos del cliente
+    $('.edit-client-btn').click(function() {
+        var employeeId = $(this).data('id');
+        var employeeName = $(this).data('firstname');
+        var employeeLastname = $(this).data('lastname');
+        var employeeEmail = $(this).data('email');
+        var employeeUsername = $(this).data('username');
+        var employeeIsStaff = $(this).data('is-staff') === 'True'; // Convertir a booleano
+        var employeePassword = $(this).data('password');
+        var employeePosition = $(this).data('position');
+
+        // Rellenar los campos del formulario con los datos del cliente
+        $('#edit_employee_id').val(employeeId);
+        $('#edit_firstname').val(employeeName);
+        $('#edit_lastname').val(employeeLastname);
+        $('#edit_email').val(employeeEmail);
+        $('#edit_username').val(employeeUsername);
+        $('#edit_password').val(employeePassword);
+        $('#edit_is-staff').prop('checked', employeeIsStaff);
+
+        $('#edit_position').val(employeePosition);
+
+        // Establecer la URL de la acción del formulario dinámicamente
+        $('#editEmployeeForm').attr('action', `/employees/edit/${employeeId}/`);
+
+
+        // Mostrar el modal
+        $('#editEmployeeModal').modal('show');
+    });
+
+    // Guardar los cambios en el cliente con AJAX
+    $('#saveEditEmployeeBtn').click(function(event) {
+        event.preventDefault(); // Evita recargar la página
+
+        var form = $("#editEmployeeForm");
+        var formData = form.serialize(); // Serializa los datos del formulario
+
+        $.ajax({
+            type: "POST",
+            url: form.attr("action"),
+            data: formData,
+            headers: {
+                "X-CSRFToken": getCSRFToken()
+            },
+            success: function(response) {
+                if (response.success) {
+                    $('#editEmployeeModal').modal('hide'); // Cerrar modal
+                    location.reload(); // Recargar página para ver cambios
+                } else {
+                    alert("Error: " + JSON.stringify(response.error));
+                }
+            },
+            error: function(xhr) {
+                alert("Error al actualizar el empleado. Inténtalo de nuevo.");
+            }
+        });
+    });
+});
+</script>

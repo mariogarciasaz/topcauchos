@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{%block title %} Vehiculos {%endblock%}
+
+{% block content %}
+
+<main class="main">
+    <div class="row mb-3 mx-3">
+        <div class="col-md-12 d-flex justify-content-between align-items-center">
+            <!-- Formulario de búsqueda alineado a la izquierda -->
+            <form method="GET" action="{% url 'clientdata:cars' %}" class="form-inline d-flex">
+                <input name="search" class="form-control mr-2" type="search" placeholder="Buscar">
+                <button type="submit" class="btn btn-outline-success mx-2">Buscar</button>
+            </form>
+        </div>
+    </div>
+
+
+
+    <div class="container-fluid">
+        <table class="table align-middle mb-0 bg-white">
+            <thead class="bg-light">
+                <tr>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Placa</th>
+                    <th>Propietario</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for car in cars %}
+                <tr>
+                    <td>{{car.brand}}</td>
+                    <td>{{car.model}}</td>
+                    <td>{{car.license_plate}}</td>
+                    <td>{{car.client}}</td>
+                    <td>
+                        <button type="button" class="btn btn-primary btn-sm">
+                            <a href="{% url 'clientdata:CarData' car.id %}" style="color: white;">Ficha</a>
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br>
+        <div class="pagination-container">
+            <button id="prev-page-btn" class="btn btn-secondary btn-sm">Previous</button>
+            <span id="current-page" class="mx-2"></span>
+            <button id="next-page-btn" class="btn btn-secondary btn-sm">Next</button>
+        </div>
+    </div>
+</main>
+
+{% include 'add_client.html' %}
+{% include 'update_client.html' %}
+{% include 'delete_client.html' %}
+
+
+{%endblock%}

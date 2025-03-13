@@ -1,0 +1,94 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recordatorio de Servicio - Top Cauchos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .email-header {
+            background-color: #ecf0f1;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        .email-header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .email-body {
+            padding: 30px;
+            color: #333333;
+        }
+        .email-body h2 {
+            font-size: 20px;
+            color:rgb(174, 179, 184);
+            margin-bottom: 20px;
+        }
+        .email-body p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        .email-footer {
+            background-color: #ecf0f1;
+            text-align: center;
+            padding: 15px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        .cta-button {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #3498db;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .cta-button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <img style="display: block; margin-left: auto; margin-right: auto;" src="{% static 'img/LOGO_TOPCAUCHOS.png' %}" alt="" width="300" height="200" />
+        </div>
+        <div class="email-body">
+            <p>Estimado/a {{ notification.client.name }},</p>
+
+            <p>Desde <strong>Top Cauchos</strong>, nos complace poder asistir a nuestros clientes y cuidar de la salud de sus vehículos. Queremos informarte que hemos identificado que tu vehículo <strong>{{ notification.car }}</strong> necesita un servicio preventivo para asegurar su correcto funcionamiento y prolongar su vida útil.</p>
+
+            <p>Sabemos lo importante que es para ti contar con un vehículo seguro y confiable, por eso te recomendamos agendar una cita con nosotros a la brevedad para realizar este servicio necesario.</p>
+
+            <p>Nuestro equipo de expertos está listo para ofrecerte un servicio profesional y de calidad, con la atención personalizada que tu vehículo merece. No dudes en contactarnos a través de nuestro número de teléfono <strong>XXXXXXX</strong> o responder a este correo para coordinar la cita según tu conveniencia.</p>
+
+            <p><strong>Tu satisfacción y la seguridad de tu vehículo son nuestra prioridad.</strong></p>
+
+            <p>Agradecemos tu confianza en <strong>Top Cauchos</strong> y esperamos poder atenderte pronto.</p>
+        </div>
+        <div class="email-footer">
+            <p>Atentamente,<br>Equipo de Top Cauchos<br><strong>Su servicio integral automotriz de confianza</strong></p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!-- Modal para Eliminar Cliente -->
+<div class="modal fade" id="deleteClientModal" tabindex="-1" aria-labelledby="deleteClientLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteClientLabel">Eliminar Cliente</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>¿Estás seguro de que deseas eliminar este cliente?</p>
+                <input type="hidden" id="delete_client_id">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteClientBtn">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap y jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Script para Eliminar Cliente -->
+<script>
+    $(document).ready(function() {
+        // Mostrar el modal de eliminación con el ID del cliente
+        $('.delete-client-btn').click(function() {
+            var clientId = $(this).data('id'); // Obtener el ID del cliente
+    
+            // Asignar el ID al campo oculto
+            $('#delete_client_id').val(clientId);
+    
+            // Mostrar el modal
+            $('#deleteClientModal').modal('show');
+        });
+    
+        // Confirmar la eliminación del cliente
+        $('#confirmDeleteClientBtn').click(function() {
+            var clientId = $('#delete_client_id').val(); // Obtener el ID del cliente
+    
+            $.ajax({
+                type: "POST",
+                url: `/clientdata/clients/delete/${clientId}/`,  // URL corregido sin el '/clients'
+                data: {
+                    "csrfmiddlewaretoken": $('[name="csrfmiddlewaretoken"]').val(),
+                    "client_id": clientId
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#deleteClientModal').modal('hide'); // Cerrar modal
+                        location.reload(); // Recargar la página para reflejar la eliminación
+                    } else {
+                        $('#deleteClientModal').modal('hide'); // Cerrar modal
+                        location.reload(); // Recargar la página para reflejar la eliminación
+                    }
+                },
+                error: function(xhr, status, error) {
+                    // Manejo del error en caso de fallo AJAX
+                    var errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : "Error al eliminar el cliente. Inténtalo de nuevo.";
+                    alert(errorMessage);  // Mostrar el error en un mensaje
+                }
+            });
+        });
+    });
+    </script>

@@ -1,0 +1,107 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Servicio - Top Cauchos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        .email-header {
+            background-color: #ecf0f1;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+        }
+        .email-header img {
+            display: block;
+            margin: 0 auto;
+        }
+        .email-body {
+            padding: 30px;
+            color: #333333;
+        }
+        .email-body h2 {
+            font-size: 20px;
+            color: rgb(174, 179, 184);
+            margin-bottom: 20px;
+        }
+        .email-body p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        .report-container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .report-container h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .report-container ul {
+            padding-left: 20px;
+        }
+        .report-container li {
+            margin-bottom: 5px;
+        }
+        .email-footer {
+            background-color: #ecf0f1;
+            text-align: center;
+            padding: 15px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <img src="{% static 'img/LOGO_TOPCAUCHOS.png' %}" alt="Top Cauchos Logo" width="300" height="200">
+        </div>
+        <div class="email-body">
+            <p>Estimado/a {{ project.client.name }},</p>
+            
+            <p>Queremos agradecerte por confiar en <strong>Top Cauchos</strong> para el mantenimiento de tu vehículo. Nos enorgullece ofrecerte un servicio de calidad y asegurarnos de que tu vehículo esté en las mejores condiciones.</p>
+            
+            <div class="report-container">
+                <h3>Reporte de Servicio</h3>
+                <p><strong>Cliente:</strong> {{ project.client.name }}</p>
+                <p><strong>Descripción del Proyecto:</strong> {{ project.description }}</p>
+                <p><strong>Vehículo:</strong> {{ project.car }}</p>
+                <p><strong>Fecha de Finalización:</strong> {{ project.end_date }}</p>
+                <h3>Listado de Tareas Realizadas:</h3>
+                <ul>
+                    {% for task in tasks %}
+                        <li>{{ task.description }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <p>Si tienes alguna consulta sobre el servicio realizado o necesitas agendar una nueva cita, no dudes en comunicarte con nosotros al número <strong>XXXXXXX</strong> o responder a este correo.</p>
+            
+            <p>Esperamos verte pronto en <strong>Top Cauchos</strong> y seguir cuidando de tu vehículo con el profesionalismo y la atención que mereces.</p>
+        </div>
+        <div class="email-footer">
+            <p>Atentamente,<br>Equipo de Top Cauchos<br><strong>Su servicio integral automotriz de confianza</strong></p>
+        </div>
+    </div>
+</body>
+</html>

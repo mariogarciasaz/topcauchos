@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{%block title %} Clientes {%endblock%}
+
+{% block content %}
+
+<div class="row mb-3 mx-3">
+    <div class="col-md-12 d-flex justify-content-between align-items-center">
+        <!-- Formulario de búsqueda alineado a la izquierda -->
+        <form method="GET" action="{% url 'clientdata:clients' %}" class="form-inline d-flex">
+            <input name="search" class="form-control mr-2" type="search" placeholder="Buscar">
+            <button type="submit" class="btn btn-outline-success mx-2">Buscar</button>
+        </form>
+
+        <!-- Botón "Agregar Cliente" alineado a la derecha -->
+        <button type="button" class="btn btn-primary button-41" style="min-width: 150px;" 
+            data-bs-toggle="modal" data-bs-target="#addClient">
+            Agregar Cliente
+        </button>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <table class="table align-middle mb-0 bg-white">
+        <thead class="bg-light">
+            <tr>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Telefono</th>
+                <th>Direccion</th>
+                <th>Fecha de Alta</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+            <tr>
+                <td>{{client.name}}</td>
+                <td>{{client.email}}</td>
+                <td>{{client.phone}}</td>
+                <td>{{client.address}}</td>
+                <td>{{client.created_at}}</td>
+                <td>
+                    <button type="button" class="btn btn-primary">
+                        <a href="{% url 'clientdata:ClientData' client.id %}" style="color: white;">Ficha</a>
+                    </button>
+                    <button class="btn btn-warning edit-client-btn"
+                        data-bs-toggle="modal" data-bs-target="#editClientModal" data-id="{{ client.id }}"
+                        data-bs-toggle="modal" data-bs-target="#editClientModal" data-name="{{ client.name }}"
+                        data-bs-toggle="modal" data-bs-target="#editClientModal" data-email="{{ client.email }}"
+                        data-bs-toggle="modal" data-bs-target="#editClientModal" data-phone="{{ client.phone }}"
+                        data-bs-toggle="modal" data-bs-target="#editClientModal" data-address="{{ client.address }}">
+                        Editar
+                    </button>
+                    <button class="btn btn-danger delete-client-btn" data-bs-toggle="modal" data-bs-target="#deleteClientModal" data-id="{{ client.id }}">Eliminar</button>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center">No se encontraron clientes.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <div class="pagination-container">
+        <button id="prev-page-btn" class="btn btn-secondary btn-sm">Previous</button>
+        <span id="current-page" class="mx-2"></span>
+        <button id="next-page-btn" class="btn btn-secondary btn-sm">Next</button>
+</div>
+
+{% include 'add_client.html' %}
+{% include 'update_client.html' %}
+{% include 'delete_client.html' %}
+
+
+{%endblock%}
