@@ -4,7 +4,7 @@
 echo "Esperando a que la base de datos esté lista..."
 
 # Usando wait-for-it para esperar a que MySQL esté listo
-./wait-for-it.sh db:3306 -t 60
+wait-for-it.sh db:3306 -t 60
 
 # Aplicar migraciones
 echo "Aplicando migraciones..."
