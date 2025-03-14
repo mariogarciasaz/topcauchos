@@ -27,7 +27,9 @@ RUN chmod +x /usr/local/bin/wait-for-it.sh
 
 # Copia el script de entrada
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh && \
+    chmod +x /core/entrypoint.sh
+
 
 # Exponer el puerto en el que se ejecuta la aplicación (por defecto Django usa el 8000)
 EXPOSE 9000
