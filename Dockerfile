@@ -30,8 +30,8 @@ COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Exponer el puerto en el que se ejecuta la aplicación (por defecto Django usa el 8000)
-EXPOSE 8000
+EXPOSE 9000
 
 # Comando para correr la aplicación usando el script de entrada
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:9000"]
