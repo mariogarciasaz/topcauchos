@@ -3,10 +3,9 @@ FROM python:3.10-slim
 # Establece el directorio de trabajo en el contenedor
 WORKDIR /core
 
-# Instala dependencias del sistema necesarias para mysqlclient y psycopg2
+# Instala dependencias del sistema necesarias para PostgreSQL
 RUN apt-get update && apt-get install -y \
     gcc \
-    default-libmysqlclient-dev \
     libpq-dev \
     pkg-config \
     && rm -rf /var/lib/apt/lists/* # Limpieza de caché
@@ -27,13 +26,11 @@ RUN chmod +x /usr/local/bin/wait-for-it.sh
 
 # Copia el script de entrada
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh && \
-    chmod +x /core/entrypoint.sh
-
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Exponer el puerto en el que se ejecuta la aplicación (por defecto Django usa el 8000)
-EXPOSE 9000
+EXPOSE 8000
 
 # Comando para correr la aplicación usando el script de entrada
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["python", "manage.py", "runserver", "0.0.0.0:9000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
