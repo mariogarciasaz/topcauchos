@@ -1,6 +1,6 @@
 import datetime
 from django.db import models
-from clientdata.models import Client
+from clientdata.models import Client, Car
 from employees.models import Employee
 
 # Create your models here.
@@ -24,7 +24,7 @@ class Project(models.Model):
     status = models.CharField(max_length=100, choices=all_status, default='Pendiente')
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
-    car = models.ForeignKey('clientdata.Car', on_delete=models.CASCADE, null=True, blank=True)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, null=True, blank=True)
     car_kms = models.CharField(max_length=100,null=True, blank=True)
 
     def __str__(self):

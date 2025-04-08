@@ -3,9 +3,10 @@ FROM python:3.10-slim
 # Establece el directorio de trabajo en el contenedor
 WORKDIR /core
 
-# Instala dependencias del sistema necesarias para PostgreSQL
+# Instala dependencias del sistema necesarias para mysqlclient y psycopg2
 RUN apt-get update && apt-get install -y \
     gcc \
+    default-libmysqlclient-dev \
     libpq-dev \
     pkg-config \
     && rm -rf /var/lib/apt/lists/* # Limpieza de caché

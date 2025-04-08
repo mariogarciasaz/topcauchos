@@ -13,10 +13,7 @@
         </form>
 
         <!-- Botón "Agregar Cliente" alineado a la derecha -->
-        <button type="button" class="btn btn-primary button-41" style="min-width: 150px;" 
-            data-bs-toggle="modal" data-bs-target="#addProject">
-            Agregar Proyecto
-        </button>
+        
     </div>
 </div>
 
@@ -45,27 +42,9 @@
                 <td>{{project.end_date}}</td>
                 <td>{{project.status}}</td>
                 <td>
-                    <button type="button" class="btn btn-primary">
+                    <button type="button" class="btn btn-primary btn-sm">
                         <a href="{% url 'projects:project_details' project.pk %}" style="color: white;">Ficha</a>
                     </button>
-                    <button class="btn btn-warning edit-project-btn"
-                        data-bs-toggle="modal" data-bs-target="#updateProject" data-project-id="{{ project.pk }}"
-                        data-bs-toggle="modal" data-bs-target="#updateProject" data-title="{{ project.title }}"
-                        data-bs-toggle="modal" data-bs-target="#updateProject" data-client="{{ project.client.pk }}"
-                        data-bs-toggle="modal" data-bs-target="#updateProject" data-employee="{{ project.employee.pk }}"
-                        data-bs-toggle="modal" data-bs-target="#updateProject" data-start-date="{{ project.start_date|date:'Y-m-d' }}"
-                        data-bs-toggle="modal" data-bs-target="#updateProject" data-end-date="{{ project.end_date|date:'Y-m-d' }}"
-                        data-bs-toggle="modal" data-bs-target="#updateProject" data-status="{{ project.status }}"
-                        data-bs-toggle="modal" data-bs-target="#updateProject" data-description="{{ project.description }}"
-                        data-bs-toggle="modal" data-bs-target="#updateProject" data-createdat="{{ project.created_at }}"
-                        data-bs-toggle="modal" data-bs-target="#updateProject" data-updatedat="{{ project.updated_at }}"
-                        data-bs-toggle="modal" data-bs-target="#updateProject" data-createdby="{{ project.created_by }}"
-                        data-bs-toggle="modal" data-bs-target="#updateProject" data-updatedby="{{ project.updated_by }}"
-                        data-bs-toggle="modal" data-bs-target="#updateProject" data-car="{{ project.car.pk }}"
-                        data-bs-toggle="modal" data-bs-target="#updateProject" data-car-kms="{{ project.car_kms }}">
-                        Editar
-                    </button>
-                    <button class="btn btn-danger delete-project-btn" data-bs-toggle="modal" data-bs-target="#deleteProject" data-project-id="{{ project.pk }}">Eliminar</button>
                 </td>
             </tr>
             {% endfor %}

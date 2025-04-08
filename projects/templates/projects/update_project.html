@@ -1,0 +1,166 @@
+<!-- Modal de Edición del Proyecto -->
+<div class="modal fade" id="updateProject2" tabindex="-1" aria-labelledby="updateProjectLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateProjectLabel">Editar Proyecto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editProjectForm" method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="editProjectTitle" class="form-label">Título</label>
+                        <input type="text" class="form-control" id="editProjectTitle" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProjectDescription" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="editProjectDescription" name="description" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProjectStartDate" class="form-label">Fecha de Inicio</label>
+                        <input type="date" class="form-control" id="editProjectStartDate" name="start_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProjectEndDate" class="form-label">Fecha de Finalización</label>
+                        <input type="date" class="form-control" id="editProjectEndDate" name="end_date">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProjectStatus" class="form-label">Estado</label>
+                        <select class="form-control" id="editProjectStatus" name="status">
+                            {% for value, text in form.fields.status.choices %}
+                                <option value="{{ value }}" {% if form.instance.status == value %}selected{% endif %}>{{ text }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProjectClient" class="form-label">Cliente</label>
+                        <select class="form-control" id="editProjectClient" name="client" required>
+                            {% for client in form.fields.client.queryset %}
+                                <option value="{{ client.pk }}" {% if form.instance.client.pk == client.pk %}selected{% endif %}>{{ client.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProjectCar" class="form-label">Vehiculo</label>
+                        <select class="form-control" id="editProjectCar" name="car" required>
+                            {% for car in form.fields.car.queryset %}
+                                <option value="{{ car.pk }}" {% if form.instance.car.pk == car.pk %}selected{% endif %}>{{ car }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProjectKms" class="form-label">Kms</label>
+                        <input type="text" class="form-control" id="editProjectKms" name="kms" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProjectEmployee" class="form-label">Empleado Asignado</label>
+                        <select class="form-control" id="editProjectEmployee" name="employee">
+                            <option value="">---------</option>
+                            {% for employee in form.fields.employee.queryset %}
+                                <option value="{{ employee.pk }}" {% if form.instance.employee.pk == employee.pk %}selected{% endif %}>{{ employee.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <input type="hidden" id="editProjectId" name="project_id" />
+                    <button type="submit" class="btn btn-primary">Actualizar Proyecto</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Función auxiliar para seleccionar el valor correcto en un <select>
+    function setSelectValue(selectElementId, value) {
+        const select = document.getElementById(selectElementId);
+        for (let i = 0; i < select.options.length; i++) {
+            if (select.options[i].value === value) {
+                select.selectedIndex = i;
+                break;
+            }
+        }
+    }
+
+    // Al hacer clic en un botón "Editar"
+    const editButtons = document.querySelectorAll('.edit-project-btn');
+
+    editButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            // Obtener los datos del proyecto desde los atributos data-*
+            const projectId = button.getAttribute('data-project-id');
+            const title = button.getAttribute('data-title');
+            const description = button.getAttribute('data-description');
+            const startDate = button.getAttribute('data-start-date');
+            const endDate = button.getAttribute('data-end-date');
+            const status = button.getAttribute('data-status');
+            const employee = button.getAttribute('data-employee');
+            const client = button.getAttribute('data-client');
+            const car = button.getAttribute('data-car');
+            const kms = button.getAttribute('data-car-kms');
+
+            console.log("Project data:", {
+                projectId,
+                title,
+                description,
+                startDate,
+                endDate,
+                status,
+                employee,
+                client,
+                car,
+                kms
+            });
+
+            // Llenar los campos del modal con los datos
+            document.getElementById('editProjectId').value = projectId;
+            document.getElementById('editProjectTitle').value = title;
+            document.getElementById('editProjectDescription').value = description;
+            document.getElementById('editProjectStartDate').value = startDate;
+            document.getElementById('editProjectEndDate').value = endDate;
+            document.getElementById('editProjectKms').value = kms;
+
+            // Establecer valores de los <select> usando la función auxiliar
+            setSelectValue('editProjectStatus', status);
+            setSelectValue('editProjectClient', client);
+            setSelectValue('editProjectCar', car);
+            setSelectValue('editProjectEmployee', employee);
+        });
+    });
+
+    // Enviar los datos del formulario al backend cuando se haga submit
+    document.getElementById('editProjectForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Evitar el envío normal del formulario
+
+        const form = new FormData(this);
+        const projectId = document.getElementById('editProjectId').value;
+        const url = `{% url 'projects:edit_project' 0 %}`.replace('0', projectId);
+
+        fetch(url, {
+            method: 'POST',
+            body: form,
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Respuesta del servidor:", data);
+            if (data.success) {
+                $('#updateProject2').modal('hide'); // Asegúrate que coincida con el ID del modal
+                location.reload();
+            } else {
+                console.error('Errores del servidor:', data.errors); // Muestra los errores específicos
+                alert('Hubo un error al actualizar el proyecto. Revisa la consola para más detalles.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Hubo un problema al actualizar el proyecto.');
+        });
+    });
+</script>
+

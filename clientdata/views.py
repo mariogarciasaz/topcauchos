@@ -11,6 +11,7 @@ from projects.forms import Project, Task
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.contrib.auth.decorators import login_required, permission_required
 import logging
+from projects.forms import ProjectForm
 
 # Create your views here.
 
@@ -400,28 +401,27 @@ class DeleteCar(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
 @permission_required('clientdata.view_client')
 def client_data(request, pk):
     client_data = get_object_or_404(Client, id=pk)
-    
-    # Busca los autos del cliente
+
+    # Filtrar solo los autos del cliente
     cars = Car.objects.filter(client_id=client_data.pk)
     projects = Project.objects.filter(client_id=client_data.pk)
-    print (projects)
 
     car_form = CarForm(initial={'client': client_data.pk})
+    
+    # 🔹 Pasa el queryset de autos del cliente a ProjectForm
+    project_form = ProjectForm(client=client_data)  
 
-    # Verifica si hay autos asociados al cliente
-    if not cars:
-        no_cars = True
-    else:
-        no_cars = False
+    no_cars = not cars
 
-    # Pasamos la información del cliente directamente en el contexto
     context = {
-        'client': client_data,  # Directamente pasamos el cliente
+        'client': client_data,
         'cars': cars,
         'no_cars': no_cars,
         'car_form': car_form,
-        'projects': projects
+        'form': project_form,  
+        'projects': projects,
     }
+    print (project_form)
 
     return render(request, 'client.html', context)
 
@@ -430,9 +430,16 @@ def client_data(request, pk):
 def car_data(request, pk):
     car_data = get_object_or_404(Car, id=pk)
     all_projects = Project.objects.filter(car_id=car_data.pk)
-    current_kms = all_projects.order_by('-car_kms').first().car_kms
-    last_service = all_projects.order_by('-end_date').first().end_date
-    print (current_kms)
+
+    # Si hay proyectos, obtenemos los valores; si no, asignamos valores predeterminados
+    latest_project_by_kms = all_projects.order_by('-car_kms').first()
+    latest_project_by_date = all_projects.order_by('-end_date').first()
+
+    current_kms = latest_project_by_kms.car_kms if latest_project_by_kms else 0
+    last_service = latest_project_by_date.end_date if latest_project_by_date else "No hay registros"
+
+    print(current_kms)
+
     context = {
         'car': car_data,
         'projects': all_projects,

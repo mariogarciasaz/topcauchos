@@ -90,43 +90,75 @@ class AddProject(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = ProjectForm()  # Agrega el formulario al contexto
+    
+        client_id = self.request.GET.get('client')
+        client = Client.objects.filter(pk=client_id).first() if client_id else None
+    
+        context['form'] = ProjectForm(client=client)
         return context
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        client_id = self.request.GET.get('client')
+    
+        print(f"Client ID: {client_id}")  # Verifica el client_id
+    
+        if client_id:
+            cars = Car.objects.filter(client_id=client_id)
+            print(f"Cars for client: {cars}") #Imprime los coches filtrados
+            form.fields['car'].queryset = cars
+        else:
+            cars = Car.objects.all()
+            print(f"All cars: {cars}") #Imprime todos los coches.
+            form.fields['car'].queryset = cars
+    
+        print(f"Car field queryset: {form.fields['car'].queryset}") #Imprime el queryset final del campo car.
+    
+        return form
+
+        
     def form_valid(self, form):
+        print("Formulario recibido:", form.cleaned_data)
         form.instance.created_by = self.request.user.username
         form.instance.created_at = datetime.datetime.now()
         form.instance.updated_by = self.request.user.username
         form.instance.updated_at = datetime.datetime.now()
         form.instance.status = 'Pendiente'
 
-        try:
-            if form.instance.end_date and form.instance.end_date < form.instance.start_date:
-                raise Exception("La fecha de finalización no puede ser anterior a la fecha de inicio.")
-            elif form.instance.status == 'En progreso':
-                raise Exception("El estado no puede ser 'En progreso' al crear el proyecto.")
-            elif form.instance.status == 'Completado':
-                raise Exception("El estado no puede ser 'Completado' al crear el proyecto.")
-        except Exception as e:
-            return JsonResponse({"success": False, "error": str(e)}, status=400)
+        client = form.cleaned_data.get('client')
+        car = form.cleaned_data.get('car')
+
+        print(f" Cliente seleccionado: {client.id if client else 'Ninguno'}")
+        print(f" Auto seleccionado: {car.id if car else 'Ninguno'}")
+
+        if client and car:
+            if car.client != client:
+                logging.error(" ERROR: El auto seleccionado no pertenece al cliente")
+                return JsonResponse(
+                    {"success": False, "error": {"car": [{"message": "El vehículo seleccionado no pertenece a este cliente.", "code": "invalid_choice"}]}},
+                    status=400
+                )
 
         form.save()
-        logging.info("El usuario " + self.request.user.username + " ha agregado un nuevo proyecto.")
+        logging.info(f"El usuario {self.request.user.username} ha agregado un nuevo proyecto.")
         messages.success(self.request, 'Proyecto agregado correctamente')
 
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({"success": True})
-            
-
 
         return super().form_valid(form)
 
+
+
     def form_invalid(self, form):
         logging.error(self.request.user.username + ' ha intentado agregar un proyecto pero ha fallado.')
+
+        # 🔹 Agrega los errores del formulario en el mensaje
+        errors = form.errors.as_json()
         messages.error(self.request, 'Error al agregar el proyecto. Inténtalo de nuevo.')
 
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({"success": False, "error": form.errors}, status=400)
+            return JsonResponse({"success": False, "error": errors}, status=400)
 
         return super().form_invalid(form)
     
@@ -140,61 +172,26 @@ class AddProject(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
 
 
 
-class UpdateProject(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
-    permission_required = 'projects.change_project'
-    login_url = 'frontend:login'
-    model = Project
-    template_name = 'update_project.html'
-    form_class = ProjectForm
-    login_url = 'frontend:login'
+@permission_required('projects.change_project', raise_exception=True)
+@login_required
+def edit_project(request, pk):
+    project = get_object_or_404(Project, pk=pk)
 
-    def handle_no_permission(self):
-        current_project = Project.objects.get(pk=self.request.GET.get('pk'))
-        """Se ejecuta cuando el usuario no tiene permiso para acceder."""
-        if self.request.user.is_authenticated:
-            logging.error(f'Acceso denegado: El usuario {self.request.user.username} intentó actualizar el proyecto {current_project.title} del cliente {current_project.client.name} sin permiso.')
-        else:
-            logging.error(f'Acceso denegado: Un usuario anónimo intentó actualizar el proyecto {current_project.title} del usuario {current_project.client.name} sin permiso.')
+    if request.method == 'POST' and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        form = ProjectForm(request.POST, instance=project, client=project.client)
 
-        # Enviar mensaje al usuario
-        messages.error(self.request, 'No tienes permisos para realizar esta acción.')
-
-        # Si es una solicitud AJAX, responder con JSON
-        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({"success": False, "error": "No tienes permisos para eliminar vehículos."}, status=403)
-        
-        # Para solicitudes normales, redirigir al login o a otra página
-        return super().handle_no_permission()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        project = self.get_object()  # Obtener el objeto del proyecto que estamos editando
-        context['form'] = ProjectForm(instance=project)  # Crear el formulario con los datos del proyecto
-        context['tasks'] = self.get_tasks()
-        context['project'] = project  # Pasar el objeto del proyecto al contexto
-        return context
-
-    def form_valid(self, form):
-        current_project = Project.objects.get(pk=self.request.GET.get('pk'))
-        try:
-            form.instance.updated_by = self.request.user.username
-            form.instance.updated_at = datetime.datetime.now()
+        if form.is_valid():
+            form.instance.updated_by = request.user.username
+            form.instance.updated_at = timezone.now()
             form.save()
-            messages.success(self.request, 'Proyecto actualizado correctamente')
-            logging.info(f'El usuario {self.request.user.username} ha actualizado el proyecto {current_project.title} del cliente {current_project.client.name}')
             return JsonResponse({'success': True})
-        except Exception as e:
-            logging.error(f'El usuario {self.request.user.username} ha intentado actualizar el proyecto {current_project.title} del cliente {current_project.client.name} pero fallo.')
-            return JsonResponse({'success': False, 'error': str(e)})
+        else:
+            # Captura los errores si el formulario no es válido
+            print("Form errors:", form.errors)  # Esto imprime en el log del servidor
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
 
-    def form_invalid(self, form):
-        current_project = Project.objects.get(pk=self.request.GET.get('pk'))
-        logging.error(f'El usuario {self.request.user.username} ha intentado actualizar el proyecto {current_project.title} del cliente {current_project.client.name} pero fallo.')
-        return JsonResponse({'success': False, 'errors': form.errors})
-    
-    def get_tasks(self):
-        tasks = Task.objects.filter(project=self.kwargs['pk'])
-        return tasks
+    return JsonResponse({'success': False, 'error': 'Método no permitido'}, status=405)
+
     
     # def get_form(self, form_class=None):
     #     form = super().get_form(form_class)

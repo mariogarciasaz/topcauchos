@@ -43,10 +43,10 @@
                 <td>{{client.address}}</td>
                 <td>{{client.created_at}}</td>
                 <td>
-                    <button type="button" class="btn btn-primary">
+                    <button type="button" class="btn btn-primary btn-sm">
                         <a href="{% url 'clientdata:ClientData' client.id %}" style="color: white;">Ficha</a>
                     </button>
-                    <button class="btn btn-warning edit-client-btn"
+                    <button class="btn btn-warning edit-client-btn btn-sm"
                         data-bs-toggle="modal" data-bs-target="#editClientModal" data-id="{{ client.id }}"
                         data-bs-toggle="modal" data-bs-target="#editClientModal" data-name="{{ client.name }}"
                         data-bs-toggle="modal" data-bs-target="#editClientModal" data-email="{{ client.email }}"
@@ -54,7 +54,7 @@
                         data-bs-toggle="modal" data-bs-target="#editClientModal" data-address="{{ client.address }}">
                         Editar
                     </button>
-                    <button class="btn btn-danger delete-client-btn" data-bs-toggle="modal" data-bs-target="#deleteClientModal" data-id="{{ client.id }}">Eliminar</button>
+                    <button class="btn btn-danger delete-client-btn btn-sm" data-bs-toggle="modal" data-bs-target="#deleteClientModal" data-id="{{ client.id }}">Eliminar</button>
                 </td>
             </tr>
             {% empty %}

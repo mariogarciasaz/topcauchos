@@ -1,0 +1,27 @@
+ERROR 2025-03-28 23:57:20,702 Internal Server Error: /projects/add/
+Traceback (most recent call last):
+  File "D:\Developments\topcauchos_end\.venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\Developments\topcauchos_end\.venv\Lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\Developments\topcauchos_end\.venv\Lib\site-packages\django\views\generic\base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Developments\topcauchos_end\.venv\Lib\site-packages\django\contrib\auth\mixins.py", line 73, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Developments\topcauchos_end\.venv\Lib\site-packages\django\contrib\auth\mixins.py", line 109, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Developments\topcauchos_end\.venv\Lib\site-packages\django\views\generic\base.py", line 143, in dispatch
+    return handler(request, *args, **kwargs)
+  File "D:\Developments\topcauchos_end\.venv\Lib\site-packages\django\views\generic\edit.py", line 182, in post
+    return super().post(request, *args, **kwargs)
+           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Developments\topcauchos_end\.venv\Lib\site-packages\django\views\generic\edit.py", line 149, in post
+    form = self.get_form()
+  File "D:\Developments\topcauchos_end\core\projects\views.py", line 102, in get_form
+    form.fields['car'].queryset = Car.objects.none()
+                                  ^^^
+UnboundLocalError: cannot access local variable 'Car' where it is not associated with a value
+ERROR 2025-03-28 23:57:20,705 "POST /projects/add/ HTTP/1.1" 500 96239

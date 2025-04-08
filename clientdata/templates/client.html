@@ -95,7 +95,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="8" class="text-center">No cars found.</td>
+                        <td colspan="8" class="text-center">No se han encontrado vehiculos.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -112,6 +112,14 @@
     <div class="container-fluid">
         <div class="col-12">
             <h2 class="h3 mb-3 page-title text-center">Proyectos</h2>
+            <div class="row mb-4">
+                <div class="col-md d-flex justify-content-end">
+                    <!-- Botón para abrir el modal de agregar carro -->
+                    <button type="button" class="button-41 btn btn-primary" style="width: auto; min-width: 150px;" data-bs-toggle="modal" data-bs-target="#addProject2">
+                        Agregar Proyecto
+                    </button>
+                </div>
+            </div>
             <table class="table border table-hover bg-white">
                 <thead>
                     <tr>
@@ -131,13 +139,33 @@
                         <td>{{ project.car }}</td>
                         <td>{{ project.start_date }}</td>
                         <td>{{ project.status }}</td>
+
                         <td>
                             <a href="{% url 'projects:project_details' project.id %}" class="btn btn-primary btn-sm">Ficha</a>
+                            <button class="btn btn-warning edit-project-btn btn-sm"
+                                    data-bs-toggle="modal" data-bs-target="#updateProject2"
+                                    data-project-id="{{ project.pk }}"
+                                    data-title="{{ project.title }}"
+                                    data-client="{{ project.client.pk }}"
+                                    data-employee="{{ project.employee.pk }}"
+                                    data-start-date="{{ project.start_date|date:'Y-m-d' }}"
+                                    data-end-date="{{ project.end_date|date:'Y-m-d' }}"
+                                    data-status="{{ project.status }}"
+                                    data-description="{{ project.description }}"
+                                    data-createdat="{{ project.created_at }}"
+                                    data-updatedat="{{ project.updated_at }}"
+                                    data-createdby="{{ project.created_by }}"
+                                    data-updatedby="{{ project.updated_by }}"
+                                    data-car="{{ project.car.pk }}"
+                                    data-car-kms="{{ project.car_kms }}">
+                                Editar
+                            </button>
+                            <a href="{% url 'projects:delete_project' project.id %}" class="btn btn-danger btn-sm">Eliminar</a>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="8" class="text-center">No cars found.</td>
+                        <td colspan="8" class="text-center">No se han encontrado proyectos.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -153,6 +181,9 @@
     {% include 'add_car.html'%}
     {% include 'edit_car.html'%}
     {% include 'delete_car.html'%}
+    {% include 'projects/add_project.html' %}
+    {% include 'projects/update_project.html' %}
+    {% include 'projects/delete_project.html' %}
 </main>
 
 
