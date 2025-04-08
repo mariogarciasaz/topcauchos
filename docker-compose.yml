@@ -17,22 +17,23 @@ services:
       - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME}
       - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL}
       - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD}
-      - DB_NAME=${NAME}
-      - DB_USER=${USER}
-      - DB_PASSWORD=${PASSWORD}
-      - DB_HOST=${HOST}
-      - DB_PORT=${PORT}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
 
   db:
-    image: mysql:8.0
+    image: postgres:15
     restart: always
     environment:
-      - MYSQL_DATABASE=${NAME}
-      - MYSQL_USER=${USER}
-      - MYSQL_PASSWORD=${PASSWORD}
-      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
-  mysql_data:
+  postgres_data:
